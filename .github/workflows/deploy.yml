@@ -1,9 +1,9 @@
-name: Deploy pygbag to GitHub Pages
+name: Deploy static content to Pages
 
 on:
   push:
-    branches:
-      - main
+    branches: ["main"]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -11,42 +11,29 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout código
-        uses: actions/checkout@v5      # 👈 Actualizado
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v6  # 👈 Actualizado
-        with:
-          python-version: "3.12"
-
-      - name: Instalar pygbag
-        run: |
-          python -m pip install --upgrade pip
-          pip install pygbag
-
-      - name: Compilar juego con pygbag
-        run: |
-          pygbag --build .
-
-      - name: Configurar GitHub Pages
+      - name: Setup Pages
         uses: actions/configure-pages@v5
 
-      - name: Subir artefacto (build/web)
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./build/web
+          # Si tus archivos están en la raíz del repositorio, usa "."
+          # Si están dentro de una carpeta (ej. "web/"), cambia la ruta
+          path: '.'
 
-      - name: Desplegar en GitHub Pages
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
