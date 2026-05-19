@@ -20,32 +20,33 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout código
+        uses: actions/checkout@v5      # 👈 Actualizado
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6  # 👈 Actualizado
         with:
           python-version: "3.12"
 
-      - name: Install pygbag
+      - name: Instalar pygbag
         run: |
           python -m pip install --upgrade pip
           pip install pygbag
 
-      - name: Build with pygbag
+      - name: Compilar juego con pygbag
         run: |
           pygbag --build .
 
-      - name: Setup Pages
+      - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
 
-      - name: Upload artifact
+      - name: Subir artefacto (build/web)
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./build/web
 
-      - name: Deploy
+      - name: Desplegar en GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
